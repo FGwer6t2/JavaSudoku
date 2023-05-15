@@ -7,97 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import javax.swing.*;
-
-/*public class SudokuMCVE extends JPanel {
-    private static final int CLUSTER = 3;
-    private static final int MAX_ROWS = 9;
-    private static final float FIELD_PTS = 32f;
-    private static final int GAP = 3;
-    private static final Color BG = Color.BLACK;
-    private static final Color SOLVED_BG = Color.LIGHT_GRAY;
-    public static final int TIMER_DELAY = 2 * 1000;
-    private JTextField[][] fieldGrid = new JTextField[MAX_ROWS][MAX_ROWS];
-
-    public SudokuMCVE() {
-        JPanel mainPanel = new JPanel(new GridLayout(CLUSTER, CLUSTER));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(GAP, GAP, GAP, GAP));
-        mainPanel.setBackground(BG);
-        JPanel[][] panels = new JPanel[CLUSTER][CLUSTER];
-        for (int i = 0; i < panels.length; i++) {
-            for (int j = 0; j < panels[i].length; j++) {
-                panels[i][j] = new JPanel(new GridLayout(CLUSTER, CLUSTER, 1, 1));
-                panels[i][j].setBackground(BG);
-                panels[i][j].setBorder(BorderFactory.createEmptyBorder(GAP, GAP, GAP, GAP));
-                mainPanel.add(panels[i][j]);
-            }
-        }
-
-        for (int row = 0; row < fieldGrid.length; row++) {
-            for (int col = 0; col < fieldGrid[row].length; col++) {
-                fieldGrid[row][col] = createField(row, col);
-                int i = row / 3;
-                int j = col / 3;
-                panels[i][j].add(fieldGrid[row][col]);
-            }
-        }
-
-        setLayout(new BorderLayout());
-        add(mainPanel, BorderLayout.CENTER);
-        add(new JButton(new SolveAction("Solve")), BorderLayout.PAGE_END);
-    }
-
-    private JTextField createField(int row, int col) {
-        JTextField field = new JTextField(2);
-        field.setHorizontalAlignment(JTextField.CENTER);
-        field.setFont(field.getFont().deriveFont(Font.BOLD, FIELD_PTS));
-
-        return field;
-    }
-
-    private class SolveAction extends AbstractAction {
-
-        public SolveAction(String name) {
-            super(name);
-            int mnemonic = (int) name.charAt(0);
-            putValue(MNEMONIC_KEY, mnemonic);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            new Timer(TIMER_DELAY, new ActionListener() {
-                private int i = 0;
-                private int j = 0;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // MAX_ROWS is 9
-                    if (i == MAX_ROWS) {
-                        ((Timer) e.getSource()).stop();
-                    }
-                    if (j == MAX_ROWS) {
-                        i++;
-                        j = 0;
-                    }
-                    int number = (int) (MAX_ROWS * Math.random()) + 1;
-                    fieldGrid[i][j].setBackground(SOLVED_BG);
-                    fieldGrid[i][j].setText(String.valueOf(number));
-
-                    j++;
-                }
-            }).start();
-        }
-    }
-    private static void createAndShowGui() {
-        SudokuMCVE mainPanel = new SudokuMCVE();
-
-        JFrame frame = new JFrame("SudokuMCVE");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.getContentPane().add(mainPanel);
-        frame.pack();
-        frame.setLocationByPlatform(true);
-        frame.setVisible(true);
-    }
-*/
+import java.util.Random;
+import java.util.Collections;
+import java.util.Arrays;
 
 public class JavaSudoku extends JPanel {
 	private static final int CLUSTER = 3;
@@ -105,7 +17,6 @@ public class JavaSudoku extends JPanel {
     private static final float FIELD_PTS = 32f;
     private static final int GAP = 3;
     private static final Color BG = Color.BLACK;
-//    private static final Color SOLVED_BG = Color.LIGHT_GRAY;
     public static final int TIMER_DELAY = 2 * 1000;
     private static JTextField[][] fieldGrid = new JTextField[MAX_ROWS][MAX_ROWS];
 	
@@ -177,14 +88,16 @@ public class JavaSudoku extends JPanel {
 	                panels[i][j] = new JPanel(new GridLayout(CLUSTER, CLUSTER, 1, 1));
 	                panels[i][j].setBorder(BorderFactory.createEmptyBorder(GAP, GAP, GAP, GAP));
 	                panels[i][j].setSize(150,150);
-	                panels[i][j].setLocation(308+(i*150),49+(j*150));
+	                panels[i][j].setLocation(308+(j*150),49+(i*150));
 	                frame.add(panels[i][j]);
 	                	            }
 	        }
 	        for (int row = 0; row < fieldGrid.length; row++) {
 	            for (int col = 0; col < fieldGrid[row].length; col++) {
 	                fieldGrid[row][col] = createField(row, col);
-	                //fieldGrid[row][col].back;
+	                fieldGrid[row][col].setBackground(Color.decode("#2B272A"));
+	                fieldGrid[row][col].setBorder(null);
+	                fieldGrid[row][col].setForeground(Color.decode("#D5F6FF"));
 	                int i = row / 3;
 	                int j = col / 3;
 	                panels[i][j].add(fieldGrid[row][col]);
@@ -192,17 +105,24 @@ public class JavaSudoku extends JPanel {
 	            }
 	        }
 
+	    	int t = 5;
+			while (t-- > 0) {
+			    int[][] arr = getRandomTable();
+			 /* for (int[] r : arr) {
+				System.out.println(Arrays.toString(r));
+			}
+				System.out.println("----");*/
+				
+			    for (int i = 0, n = arr.length; i < n; i++) {
+		            for (int j = 0, m = arr[i].length; j < m; j++) {
+		            	fieldGrid[i][j].setText(String.valueOf(arr[i][j]));
+		            }
+		        }		    
+			}
+	        
 	        frame.setLayout(new BorderLayout());
-	        //frame.add(mainPanel/*,BorderLayout.CENTER*/);
-	        //mainPanel.setSize(450,450);
-	        //frame.add(new JButton(new SolveAction("Solve")), BorderLayout.PAGE_END);
-	        	        
 	        menuBar.add(fileMenu);
 	        menuBar.setBackground(Color.decode("#141113"));
-	        //fileMenu.getBackground(Color.white);
-	       // menuBar.setBackground( Color.decode("#141113") );
-	        // menuBar.setForeground(Color.decode("#D5F6FF"));
-	        //frame.setForeground(Color.decode("#D5F6FF"));
 	        frame.setJMenuBar(menuBar);
 	        frame.setBackground(Color.decode("#141113"));
 	        frame.setPreferredSize(new Dimension(270, 225));
@@ -229,16 +149,11 @@ public class JavaSudoku extends JPanel {
 	            int mnemonic = (int) name.charAt(0);
 	            putValue(MNEMONIC_KEY, mnemonic);
 	        }
-
-	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	            new Timer(TIMER_DELAY, new ActionListener() {
 	                private int i = 0;
 	                private int j = 0;
-
-	                @Override
 	                public void actionPerformed(ActionEvent e) {
-	                    // MAX_ROWS is 9
 	                    if (i == MAX_ROWS) {
 	                        ((Timer) e.getSource()).stop();
 	                    }
@@ -255,28 +170,87 @@ public class JavaSudoku extends JPanel {
 	        }
 	    }
 
-	   /* private static void createAndShowGui() {
-	        SudokuMCVE mainPanel = new SudokuMCVE();
+	    private static int[][] generateTable() {
+	        int[][] arr = new int[9][9];
+	        
+	        Random r = new Random();
+	        
+	        for (int i = 0; i < arr.length;) {
+	            int j = r.nextInt(i + 1);
+	            arr[0][i] = arr[0][j];
+	            arr[0][j] = ++i;
+	        }
+	        int shift = r.nextBoolean() ? 1 : arr.length - 1;
+	        for (int i = 1; i < arr.length; i++) {
+	            for (int j = 0; j < arr.length; j++) {
+	                arr[i][j] = arr[i - 1][(j + shift) % arr.length];
+	            }
+	        }
+	        return arr;
+	    } 
+	    
+	    private static void transpose(int[][] arr) {
+	        for (int i = 0, n = arr.length; i < n; i++) {
+	            for (int j = i + 1, m = arr[i].length; j < m; j++) {
+	                int tmp = arr[i][j];
+	                arr[i][j] = arr[j][i];
+	                arr[j][i] = tmp;
+	            }
+	        }
+	    }
+	    
+	    private static void swapRows(int r1, int r2, int[][] arr) {
+	        int[] tmp = arr[r1];
+	        arr[r1] = arr[r2];
+	        arr[r2] = tmp;
+	    }
 
-	        JFrame frame = new JFrame("SudokuMCVE");
-	        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	        frame.getContentPane().add(mainPanel);
-	        frame.pack();
-	        frame.setLocationByPlatform(true);
-	        frame.setVisible(true);
-	    }*/
-	 
-	 
+	    private static void swapCols(int c1, int c2, int[][] arr) {
+	        for (int i = 0, n = arr.length; i < n; i++) {
+	            int tmp = arr[i][c1];
+	            arr[i][c1] = arr[i][c2];
+	            arr[i][c2] = tmp;
+	        }
+	    }
+
+	    private static void rotateRows(int i, int[][] arr) {
+	        Collections.rotate(Arrays.asList(arr), i);
+	    }
+	    
+	    public static int[][] getRandomTable() {
+	        int[][] arr = generateTable();
+	        
+	        Random r = new Random();
+	        int shuffles = 20 + r.nextInt(81);
+	        
+	        while (shuffles-- > 0) {
+	            int i = r.nextInt(9);
+	            int j = r.nextInt(9);
+	            if (i == j) {
+	                if (r.nextBoolean())
+	                    transpose(arr);
+	                else 
+	                    rotateRows(r.nextBoolean() ? i : -i, arr);
+	            } else if (r.nextBoolean()) {
+	                swapRows(i, j, arr);
+	            } else{
+	                swapCols(i, j, arr);
+	            }
+	        }
+
+	        return arr;
+	    }
+	    
 public static void main(String[] args) {
 
+	
 	  javax.swing.SwingUtilities.invokeLater(new Runnable() {
           public void run() {
               JFrame.setDefaultLookAndFeelDecorated(true);
               JavaSudoku();
-    //          SwingUtilities.invokeLater(() -> {
-      //            createAndShowGui();
-        //      });              
+                          
           }
       });
+	
 }
 }
