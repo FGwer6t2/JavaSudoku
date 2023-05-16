@@ -7,6 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import javax.swing.*;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import java.util.Random;
 import java.util.Collections;
 import java.util.Arrays;
@@ -16,28 +19,33 @@ public class JavaSudoku extends JPanel {
     private static final int MAX_ROWS = 9;
     private static final float FIELD_PTS = 32f;
     private static final int GAP = 3;
-    private static final Color BG = Color.BLACK;
     public static final int TIMER_DELAY = 2 * 1000;
     private static JTextField[][] fieldGrid = new JTextField[MAX_ROWS][MAX_ROWS];
-	
+	private static Random rand = new Random();
+	private static int[][] arrOut = new int[9][9];
 	 public static void JavaSudoku() {
          
 	        JFrame frame = new JFrame("Sudoku");
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frame.setBackground(Color.decode("#1141113"));
 	        Font font = new Font("Sans Serif", Font.PLAIN, 20);
 	        JMenuBar menuBar = new JMenuBar();
 	         
 	        JMenu fileMenu = new JMenu("Menu");
 	        fileMenu.setFont(font);
 	        fileMenu.setForeground(Color.decode("#D5F6FF"));
+	        fileMenu.setBackground(Color.decode("#1141113"));
 	        
 	        JMenuItem menuButton = new JMenuItem("Main Lobby");
 	        menuButton.setFont(font);
-	        menuButton.setForeground(Color.WHITE);
+	        menuButton.setForeground(Color.decode("#D5F6FF"));
+	        menuButton.setBackground(Color.decode("#1141113"));
 	        fileMenu.add(menuButton);
 	        
 	        JMenuItem diffButton = new JMenuItem("Difficulty");
 	        diffButton.setFont(font);
+	        diffButton.setBackground(Color.decode("#1141113"));
+	        diffButton.setForeground(Color.decode("#D5F6FF"));
 	        fileMenu.add(diffButton);
 	        
 	        JButton help = new JButton("Подсказка");
@@ -68,6 +76,8 @@ public class JavaSudoku extends JPanel {
 	         
 	        JMenuItem exitItem = new JMenuItem("Exit");
 	        exitItem.setFont(font);
+	        exitItem.setBackground(Color.decode("#1141113"));
+	        exitItem.setForeground(Color.decode("#D5F6FF"));
 	        fileMenu.add(exitItem);
 	         
 	        exitItem.addActionListener(new ActionListener() {           
@@ -75,13 +85,6 @@ public class JavaSudoku extends JPanel {
 	                System.exit(0);             
 	            }           
 	        });
-	        
-	        //JPanel mainPanel = new JPanel();
-	        //mainPanel.setBorder(BorderFactory.createEmptyBorder(GAP, GAP, GAP, GAP));
-	        //mainPanel.setBackground(Color.decode("#141113"));
-	        //mainPanel.setSize(450,450);
-	        //mainPanel.setLocation(508,49);
-	       // mainPanel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 	        JPanel[][] panels = new JPanel[CLUSTER][CLUSTER];
 	        for (int i = 0; i < panels.length; i++) {
 	            for (int j = 0; j < panels[i].length; j++) {
@@ -105,34 +108,106 @@ public class JavaSudoku extends JPanel {
 	            }
 	        }
 
+	        class JTextFieldLimit extends PlainDocument {
+		    	  private int limit;
+		    	  JTextFieldLimit(int limit) {
+		    	    super();
+		    	    this.limit = limit;
+		    	  }
+
+		    	  public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+		    	    if (str == null)
+		    	      return;
+
+		    	    if ((getLength() + str.length()) <= limit) {
+		    	      super.insertString(offset, str, attr);
+		    	    }
+		    	  }
+		    	}
+	        
 	    	int t = 5;
 			while (t-- > 0) {
 			    int[][] arr = getRandomTable();
+			    //int[][] arrOut = new int[arr.length][arr.length];
+			    for (int i = 0, n = arr.length; i < n; i++) {
+		            for (int j = 0, m = arr[i].length; j < m; j++) {
+		            	arrOut[i][j] = arr[i][j];
+		            }
+		        }
+			    for (int i = 0; i < arrOut.length; i++)
+			    {
+			    	for (int j = 0; j < arrOut.length; j++)
+			    	{
+		            if (rand.nextInt(2) == 0) {
+		                arrOut[i][j] = 0;
+		            }
+			    	}
+		        }
 			 /* for (int[] r : arr) {
 				System.out.println(Arrays.toString(r));
 			}
 				System.out.println("----");*/
 				
-			    for (int i = 0, n = arr.length; i < n; i++) {
-		            for (int j = 0, m = arr[i].length; j < m; j++) {
-		            	fieldGrid[i][j].setText(String.valueOf(arr[i][j]));
+			    for (int i = 0, n = arrOut.length; i < n; i++) {
+		            for (int j = 0, m = arrOut[i].length; j < m; j++) {
+		            	if(arrOut[i][j]==0)
+		            	{
+		            		fieldGrid[i][j].setText("");
+		            		fieldGrid[i][j].setEditable(true);
+		            		fieldGrid[i][j].setDocument(new JTextFieldLimit(1));
+		            		
+		            	}
+		            	else
+		            	{
+		            		fieldGrid[i][j].setText(String.valueOf(arrOut[i][j]));
+		            		fieldGrid[i][j].setEditable(false);
+		            	}
 		            }
-		        }		    
+		        }
+			    
+			    
 			}
 	        
 	        frame.setLayout(new BorderLayout());
 	        menuBar.add(fileMenu);
-	        menuBar.setBackground(Color.decode("#141113"));
+	    
 	        frame.setJMenuBar(menuBar);
-	        frame.setBackground(Color.decode("#141113"));
+	        frame.getContentPane().setBackground(Color.decode("#141113"));
 	        frame.setPreferredSize(new Dimension(270, 225));
 	        frame.pack();
 	        frame.setLocationRelativeTo(null);
-	        frame.setVisible(true);
+	        
 	        
 	        frame.setBounds(100, 100, 800, 600); 
+	        
+	        menuBar.setBackground(Color.BLACK);
+	        frame.setVisible(true);
+	       /* for (int i = 0; i < arrOut.length; i++) {
+		        for (int j = 0; j < arrOut.length; j++) {
+		            JTextField field = fieldGrid[i][j];
+		            field.addActionListener(new ActionListener() {
+		                @Override
+		                public void actionPerformed(ActionEvent e) {
+		                    String text = field.getText();
+		                    if (text.matches("\\d")) {
+		                        int value = Integer.parseInt(text);
+		                        if (value == arrOut[i][j])
+		                        {
+		                            field.setBackground(Color.GREEN);
+		                        } 
+		                        else 
+		                        {
+		                            field.setBackground(Color.RED);
+		                        }
+		                    } else {
+		                        field.setBackground(Color.RED);
+		                    }
+		                }
+		            });
+		        }
+		    } */
 	    }
-	 
+	
 	 private static JTextField createField(int row, int col) {
 	        JTextField field = new JTextField(2);
 	        field.setHorizontalAlignment(JTextField.CENTER);
@@ -240,6 +315,11 @@ public class JavaSudoku extends JPanel {
 
 	        return arr;
 	    }
+
+	  
+	    
+	    
+	    
 	    
 public static void main(String[] args) {
 
@@ -252,5 +332,7 @@ public static void main(String[] args) {
           }
       });
 	
+	  
+	  
 }
 }
